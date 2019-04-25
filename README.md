@@ -71,3 +71,9 @@ Applications of Data Science Across Different Domains
 
 - Optimize public resource allocation for urban development to improve quality of life (eg: reduce traffic, minimize pollution)
 - Personalize public services to target individual citizens based on multi-modal data (social, mobile, location..etc)
+
+
+
+## Authors
+- Bastin Robins .J
+- Dr. Vandana Bhagat
