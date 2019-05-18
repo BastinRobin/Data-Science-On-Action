@@ -35,7 +35,29 @@ __Output:__ Number of samples: 101766
 
 From briefly, looking through the data columns, we can see there are some identification columns, some numerical columns, and some categorical (free-text) columns. These columns will be described in more detail below.
 
-![data column](img/fig1.png)
+![Figure 1](img/fig1.png)
+
+There is some missing data that are represented with a question mark (?). We will deal with this in the feature engineering section.
+
+The most important column here is readmitted, which tells us if a patient was hospitalized within 30 days, greater than 30 days or not readmitted.
+
+![Figure 2](img/fig2.png)
+
+Another column that is important is `discharge_disposition_id`, which tells us where the patient went after the hospitalization. If we look at the IDs_mapping.csv provided by UCI we can see that 11,13,14,19,20,21 are related to death or hospice. We should remove these samples from the predictive model since they cannot be readmitted.
+
+```python
+df = df.loc[~df.discharge_disposition_id.isin([11,13,14,19,20,21])]
+```
+
+Now let’s define an output variable for our binary classification. Here we will try to predict if a patient is likely to be re-admitted within 30 days of discharge.
+
+```python
+df['OUTPUT_LABEL'] = (df.readmitted == '<30').astype('int')
+```
+
+Let’s define a function to calculate the prevalence of population that is readmitted with 30 days.
+
+![Figure 3](img/fig3.png)
 
 ## Model Building:
 
