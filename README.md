@@ -2,8 +2,8 @@
 Applications of Data Science Across Different Domains**
 
 ## [Healthcare](healthcare/chapter.md)
-- Hospital Readmission for Patients with Diabetes.
-- Predict personalized health outcomes to optimize recommended treatments.  
+- [Hospital Readmission for Patients with Diabetes](healthcare/chapter.md.)
+- [Predict Presence Of Heart Disease Using Machine Learning](healthcare/chapter2.md.)
 
 ## Pharmaceuticals
 
