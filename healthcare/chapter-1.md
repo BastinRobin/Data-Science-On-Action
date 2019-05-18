@@ -1,4 +1,4 @@
-# Simple hospital ward bed occupancy model
+# Predict Presence Of Heart Disease Using Machine Learning
 
 ## Problem
 Diabetes is a condition in which there is too much glucose (a type of sugar) in the blood. Over time, high blood glucose levels can damage the body's organs. Possible complications include damage to large (macrovascular) and small (microvascular) blood vessels, which can lead to heart attack, stroke, and problems with the kidneys, eyes, gums, feet and nerves. 

@@ -268,6 +268,69 @@ At this point, let’s check what percent of our groups are hospitalized within 
 
 ![Figure 20](img/fig20.png)
 
+The prevalence is about the same for each group. At this point, you might say, drop the training data into a predictive model and see the outcome. However, if we do this, it is possible that we will get back a model that is 89% accurate. Great! Good job! But wait, we never catch any of the readmissions (recall= 0%). How can this happen?
+
+What is happening is that we have an imbalanced dataset where there are much more negatives than positives, so the model might just assign all samples as negative.
+
+Typically, it is better to balance the data in some way to give the positives more weight. There are 3 strategies that are typically utilized
+
+- sub-sample the more dominant class: use a random subset of the negatives
+- over-sample the imbalanced class: use the same positive samples multiple times
+- create synthetic positive data
+
+Usually, you will want to use the latter two methods if you only have a handful of positive cases. Since we have a few thousand positive cases, let’s use the sub-sample approach. Here, we will create a balanced training data set that has 50% positive and 50% negative. You can also play with this ratio to see if you can get an improvement.
+
+![Figure 21](img/fig21.png)
+
+Most machine learning packages like to use an input matrix X and output vector y, so let’s create those:
+
+![Figure 22](img/fig22.png)
+
+Some machine learning models have trouble when the variables are of different size (0–100, vs 0–1000000). To deal with that we can scale the data. Here we will use scikit-learn’s Standard Scaler which removes the mean and scales to unit variance. Here I will create a scaler using all the training data, but you could use the balanced one if you wanted.
+
+![Figure 23](img/fig23.png)
+
+We will need this scaler for the test data, so let’s save it using a package called `pickle`.
+
+![Figure 24](img/fig24.png)
+
+Now we can transform our data matrices
+
+![Figure 25](img/fig25.png)
+
+We won’t transform the test matrix yet, so we aren’t tempted to look at the performance until we are done with model selection.
+
+### Model Selection
+Wow! so much work to get ready for a model. This is always true in data science. You spend 80–90% cleaning and preparing data.
+
+In this section, we train a few machine learning models and use a few techniques for optimizing them. We will then select the best model based on performance on the validation set.
+
+We will utilize the following functions to evaluate the performance of the model. For a discussion of these performance metrics, see my prior articles
+
+![Figure 26](img/fig26.png)
+
+Since we balanced our training data, let’s set our threshold at 0.5 to label a predicted sample as positive.
+
+```python
+thresh = 0.5
+```
+
+### Random forest
+Random Forest is a flexible, easy to use machine learning algorithm that produces, even without hyper-parameter tuning, a great result most of the time. It is also one of the most used algorithms, because it's simplicity and the fact that it can be used for both classification and regression tasks.
+
+One disadvantage of decision trees is that they tend overfit very easily by memorizing the training data. As a result, random forests were created to reduce the overfitting. In random forest models, multiple trees are created and the results are aggregated. The trees in a forest are decorrelated by using a random set of samples and random number of features in each tree. In most cases, random forests work better than decision trees because they are able to generalize more easily. To fit random forests, we can use the following code.
+
+![Figure 27](img/fig27.png)
+
+![Figure 28](img/fig28.png)
+
+
+## Outcome
+Through this project, we created a binary classifier to predict the probability that a patient with diabetes would be readmitted to the hospital within 30 days. On held out test data, our best model had an AUC of of 0.681. Using this model, we are able to catch 58% of the readmissions from our model that performs approximately 1.5 times better than randomly selecting patients.
+
+## Deployment 
+We have reached the exact point in which the model which ever been built has to be deployed in-order to predict the readmission of diabetic patients. 
+
 ## Outcomes 
 
 ## Deployment 
