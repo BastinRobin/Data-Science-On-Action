@@ -14,6 +14,16 @@ One patient population that is at increased risk of hospitalization and readmiss
 
 In this usecase we will explore how to build a model predicting readmission in Python.
 
+## Data Sources:
+
+## Model Building:
+
+## Outcomes 
+
+## Deployment 
+
+## Conclusions
+
 ### Links:
 - HRRP - https://www.cms.gov/Medicare/Quality-Initiatives-Patient-Assessment-Instruments/Value-Based-Programs/HRRP/Hospital-Readmission-Reduction-Program.html
 - Ostling et al 2017 - https://clindiabetesendo.biomedcentral.com/articles/10.1186/s40842-016-0040-x
