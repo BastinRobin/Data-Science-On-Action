@@ -10,7 +10,7 @@ As the healthcare system moves toward value-based care, CMS has created many pro
 
 One patient population that is at increased risk of hospitalization and readmission is that of diabetes. Diabetes is a medical condition that affects approximately 1 in 10 patients in the United States. According to Ostling et al, patients with diabetes have almost double the chance of being hospitalized than the general population ([Ostling et al 2017](https://clindiabetesendo.biomedcentral.com/articles/10.1186/s40842-016-0040-x)). Therefore, in this article, I will focus on predicting hospital readmission for patients with diabetes. In this usecase we will explore how to build a model predicting readmission in Python.
 
-## Can We ?
+## How-To
 Predict if a patient with diabetes will be readmitted to the hospital within 30 days.
 
 
@@ -31,6 +31,11 @@ df = pd.read_csv('diabetic_data.csv')
 print('Number of samples:',len(df))
 ```
 __Output:__ Number of samples: 101766
+
+
+From briefly, looking through the data columns, we can see there are some identification columns, some numerical columns, and some categorical (free-text) columns. These columns will be described in more detail below.
+
+![data column](img/fig1.png)
 
 ## Model Building:
 
