@@ -1,4 +1,4 @@
-# Data Science Applied
+# Data Science On Action
 Applications of Data Science Across Different Domains**
 
 ## [Healthcare](healthcare/chapter.md)

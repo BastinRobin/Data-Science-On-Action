@@ -1,4 +1,4 @@
-# Hospital Readmission for Patients with Diabetes
+# Predict Hospital Readmission for Patients with Diabetes
 
 ## Problem
 Diabetes is a condition in which there is too much glucose (a type of sugar) in the blood. Over time, high blood glucose levels can damage the body's organs. Possible complications include damage to large (macrovascular) and small (microvascular) blood vessels, which can lead to heart attack, stroke, and problems with the kidneys, eyes, gums, feet and nerves. 
@@ -20,6 +20,7 @@ The data that is used in this project originally comes from the UCI machine lear
 
 ## Data Modeling:
 In this project, we will utilize Python to build the predictive model. Let’s begin by loading the data and exploring some of the columns. We can start using `scikit-learn` python machine learning library combined with `python-pandas` library for data wranging.
+
 `In [1]:`
 ```python
 import pandas as pd
@@ -47,12 +48,14 @@ The most important column here is readmitted, which tells us if a patient was ho
 
 Another column that is important is `discharge_disposition_id`, which tells us where the patient went after the hospitalization. If we look at the IDs_mapping.csv provided by UCI we can see that 11,13,14,19,20,21 are related to death or hospice. We should remove these samples from the predictive model since they cannot be readmitted.
 
+`In [6]:`
 ```python
 df = df.loc[~df.discharge_disposition_id.isin([11,13,14,19,20,21])]
 ```
 
 Now let’s define an output variable for our binary classification. Here we will try to predict if a patient is likely to be re-admitted within 30 days of discharge.
 
+`In [7]:`
 ```python
 df['OUTPUT_LABEL'] = (df.readmitted == '<30').astype('int')
 ```
@@ -139,6 +142,131 @@ df['race'] = df['race'].fillna('UNK')
 df['payer_code'] = df['payer_code'].fillna('UNK')
 df['medical_specialty'] = df['medical_specialty'].fillna('UNK')
 ```
+
+Note that `medical_specialty` is not contained in our list above because we need to do one more processing step. Let’s investigate medical specialty before we begin with one-hot encoding.
+
+`In [16]:`
+```python
+print('Number medical specialty:', df.medical_specialty.nunique())
+df.groupby('medical_specialty').size().sort_values(ascending = False)
+```
+Number medical specialty: 73
+
+`Out[16]:`
+```python
+medical_specialty
+UNK                                  48616
+InternalMedicine                     14237
+Emergency/Trauma                      7419
+Family/GeneralPractice                7252
+Cardiology                            5279
+Surgery-General                       3059
+Nephrology                            1539
+Orthopedics                           1392
+Orthopedics-Reconstructive            1230
+Radiologist                           1121
+Pulmonology                            854
+Psychiatry                             853
+Urology                                682
+ObstetricsandGynecology                669
+Surgery-Cardiovascular/Thoracic        642
+Gastroenterology                       538
+Surgery-Vascular                       525
+Surgery-Neuro                          462
+PhysicalMedicineandRehabilitation      391
+Oncology                               319
+Pediatrics                             253
+Neurology                              201
+```
+
+We can see that most of them are unknown and that the count drops off pretty quickly. We don’t want to add 73 new variables since some of them only have a few samples. As an alternative, we can create a new variable that only has 11 options (the top 10 specialities and then an other category). Obviously, there are other options for bucketing, but this is one of the easiest methods for reducing the number of possible categories.
+
+![Figure 4](img/fig4.png)
+
+To convert our categorical features to numbers, we will use a technique called one-hot encoding. In one-hot encoding, you create a new column for each unique value in that column. Then the value of the column is 1 if the sample has that unique value or 0 otherwise. For example, for the column race, we would create new columns `(‘race_Caucasian’,’race_AfricanAmerican’, etc)`. If the patient’s race is Caucasian, the patient gets a 1 under ‘race_Caucasian’ and 0 under the rest of the race columns. To create these one-hot encoding columns, we can use the `get_dummies` function provided by pandas
+
+Now the problem is that if we create a column for each unique value, we have correlated columns. In other words, the value in one column can be figured out by looking at the rest of the columns. For example, if the sample is not African, American, Asian, Causasian, Hispance or Other, it must be UNK. To deal with this, we can use the `drop_first` option, which will drop the first categorical value for each column.
+
+The `get_dummies` function does not work on numerical data. To trick `get_dummies`, we can convert the numerical data from the 3 ID types into strings and then it will work properly.
+
+![Figure 5](img/fig5.png)
+
+Now we are ready to make all of our categorical features
+
+![Figure 6](img/fig6.png)
+
+To add the one-hot encoding columns to the dataframe we can use concat function. Make sure to use axis = 1 to indicate add the columns.
+
+![Figure 7](img/fig7.png)
+
+Let’s save the column names of the categorical data to keep track of them.
+
+![Figure 8](img/fig8.png)
+
+### Extra Features
+The last two columns we want to make features are `age` and `weight`. Typically, you would think of these as numerical data, but they are categorical in this dataset as shown below.
+
+![Figure 9](img/fig9.png)
+
+One option could be to create categorical data as shown above. Since there is a natural order to these values, it might make more sense to convert these to numerical data that is ordered. Another example when you would want to do this might be size of a t-shirt `(small, medium, large)`. Let’s start with age.
+
+![Figure 10](img/fig10.png)
+
+Let’s map these to 0 to 90 by 10s for the numerical data.
+
+![Figure 11](img/fig11.png)
+
+Now let’s look at weight. Note that this feature is not filled out very often.
+
+![Figure 12](img/fig12.png)
+
+Instead of creating an ordinal feature that we did above, let’s just create a variable to say if weight was filled out or not. The presence of a variable might be predictive regardless of the value.
+
+![Figure 13](img/fig13.png)
+
+Let’s keep track of these extra columns too.
+
+![Figure 14](img/fig14.png)
+
+### Feature Engineering: Summary
+Through this process we created 143 features for the machine learning model. The break-down of the features is
+
+- 8 numerical features
+- 133 categorical features
+- 2 extra features
+
+Let’s make a new dataframe that only has the features and the `OUTPUT_LABEL`.
+
+![Figure 15](img/fig15.png)
+
+### Building Training/Validation/Test Samples
+So far we have explored our data and created features from the categorical data. It is now time for us to split our data. The idea behind splitting the data is so that you can measure how well your model would do on unseen data. We split into three parts:
+
+- Training samples: these samples are used to train the model
+-  Validation samples: these samples are held out from the training data and are used to make decisions on how to improve the model
+- Test samples: these samples are held out from all decisions and are used to measure the generalized performance of the model
+ 
+In this usecase, we will split into `70% train`, `15% validation`, and `15% test`.
+
+The first thing I like to do is to shuffle the samples using sample in case there was some order (e.g. all positive samples on top). Here `n` is the number of samples. `random_state` is just specified so the usecase is reproducable. You wouldn't need `random_state` necessarily in your own usecase.
+
+![Figure 16](img/fig16.png)
+
+We can use sample again to extract 30% (using frac) of the data to be used for validation / test splits. It is important that validation and test come from similar distributions and this technique is one way to do it.
+
+![Figure 17](img/fig17.png)
+
+And now split into test and validation using 50% fraction.
+
+![Figure 18](img/fig18.png)
+
+Note that `.drop` just drops the rows from df_test to get the rows that were not part of the sample. We can use this same idea to get the training data.
+
+![Figure 19](img/fig19.png)
+
+At this point, let’s check what percent of our groups are hospitalized within 30 days. This is known as prevalence. Ideally, all three groups would have similar prevalance.
+
+![Figure 20](img/fig20.png)
 
 ## Outcomes 
 
