@@ -20,7 +20,7 @@ The data that is used in this project originally comes from the UCI machine lear
 
 ## Data Modeling:
 In this project, we will utilize Python to build the predictive model. Let’s begin by loading the data and exploring some of the columns. We can start using `scikit-learn` python machine learning library combined with `python-pandas` library for data wranging.
-
+`In [1]:`
 ```python
 import pandas as pd
 import numpy as np
@@ -81,6 +81,7 @@ In this section, we will create features for our predictive model. For each sect
 
 In this data set, the missing numbers were filled with a question mark. Let’s replace it with a nan representation.
 
+`In [10]:`
 ```python
 # replace ? with nan
 df = df.replace('?',np.nan)
@@ -95,9 +96,13 @@ cols_num = ['time_in_hospital','num_lab_procedures', 'num_procedures', 'num_medi
 ```
 
 Let’s check if there are any missing values in the numerical data.
+
+`In [12]: `
 ```python
-In [12]: df[cols_num].isnull().sum()
-Out[12]:
+df[cols_num].isnull().sum()
+```
+`Out[12]:`
+```python
 time_in_hospital      0
 num_lab_procedures    0
 num_procedures        0
@@ -113,6 +118,8 @@ dtype: int64
 The next type of features we want to create are categorical variables. Categorical variables are non-numeric data such as race and gender. To turn these non-numerical data into variables, the simplest thing is to use a technique called one-hot encoding, which will be explained below.
 
 The first set of categorical data we will deal with are these columns:
+
+`In [14]:`
 ```python
 cols_cat = ['race', 'gender', 
        'max_glu_serum', 'A1Cresult',
@@ -126,10 +133,11 @@ cols_cat = ['race', 'gender',
 ```
 Of our categorical features, `race`, `payer_code`, and `medical_specialty` have missing data. Since these are categorical data, the best thing to do is to just add another categorical type for unknown using the `fillna` function.
 
+`In [15]:`
 ```python
-In [15]: df['race'] = df['race'].fillna('UNK')
-         df['payer_code'] = df['payer_code'].fillna('UNK')
-         df['medical_specialty'] = df['medical_specialty'].fillna('UNK')
+df['race'] = df['race'].fillna('UNK')
+df['payer_code'] = df['payer_code'].fillna('UNK')
+df['medical_specialty'] = df['medical_specialty'].fillna('UNK')
 ```
 
 ## Outcomes 
