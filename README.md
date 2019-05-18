@@ -1,8 +1,8 @@
 # Data Science Applied
 Applications of Data Science Across Different Domains**
 
-## Healthcare
-- Diagnose known diseases from scans, biopsies, audio and other data.
+## [Healthcare](healthcare/chapter.md)
+- Hospital Readmission for Patients with Diabetes.
 - Predict personalized health outcomes to optimize recommended treatments.  
 
 ## Pharmaceuticals
