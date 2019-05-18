@@ -23,7 +23,6 @@ Applications of Data Science Across Different Domains**
 - Optimize in-store product assortment to maximize sales
 - Personalize product recommendations and advertising to target individual consumers.
 
-  
 
 ## Finance
 
