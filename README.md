@@ -2,7 +2,7 @@
 Applications of Data Science Across Different Domains**
 
 ## [Healthcare](healthcare/chapter.md)
-- [Predict Presence Of Heart Disease Using Machine Learning](healthcare/chapter-2.md)
+- [Predict Presence Of Heart Disease Using Machine Learning](healthcare/chapter-1.md)
 - [Hospital Readmission for Patients with Diabetes](healthcare/chapter-2.md)
 
 
