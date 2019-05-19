@@ -1,17 +1,17 @@
 # Predict Hospital Readmission for Patients with Diabetes
 
+
 ## Problem
 Diabetes is a condition in which there is too much glucose (a type of sugar) in the blood. Over time, high blood glucose levels can damage the body's organs. Possible complications include damage to large (macrovascular) and small (microvascular) blood vessels, which can lead to heart attack, stroke, and problems with the kidneys, eyes, gums, feet and nerves. 
 
-## Facts Exploration
+Can we predict if a patient with diabetes will be readmitted to the hospital within 30 days.
+
+## Solution Guideline
 Risk of most diabetes-related complications can be reduced by keeping blood pressure, blood glucose and cholesterol levels within recommended range. Also, being a healthy weight, eating healthily, reducing alcohol intake, and not smoking will help reduce your risk. Regular check-ups and screening are important to pick up any problems early.
 
 As the healthcare system moves toward value-based care, CMS has created many programs to improve the quality of care of patients. One of these programs is called the Hospital Readmission Reduction Program ([HRRP](https://www.cms.gov/Medicare/Quality-Initiatives-Patient-Assessment-Instruments/Value-Based-Programs/HRRP/Hospital-Readmission-Reduction-Program.html)), which reduces reimbursement to hospitals with above average readmissions. For those hospitals which are currently penalized under this program, one solution is to create interventions to provide additional assistance to patients with increased risk of readmission. But how do we identify these patients? We can use predictive modeling from data science to help prioritize patients.
 
 One patient population that is at increased risk of hospitalization and readmission is that of diabetes. Diabetes is a medical condition that affects approximately 1 in 10 patients in the United States. According to Ostling et al, patients with diabetes have almost double the chance of being hospitalized than the general population ([Ostling et al 2017](https://clindiabetesendo.biomedcentral.com/articles/10.1186/s40842-016-0040-x)). Therefore, in this article, I will focus on predicting hospital readmission for patients with diabetes. In this usecase we will explore how to build a model predicting readmission in Python.
-
-## How-To
-Predict if a patient with diabetes will be readmitted to the hospital within 30 days.
 
 
 ## Data Sources:
@@ -21,7 +21,7 @@ The data that is used in this project originally comes from the UCI machine lear
 ## Data Modeling:
 In this project, we will utilize Python to build the predictive model. Let’s begin by loading the data and exploring some of the columns. We can start using `scikit-learn` python machine learning library combined with `python-pandas` library for data wranging.
 
-`In [1]:`
+
 ```python
 import pandas as pd
 import numpy as np
@@ -49,6 +49,7 @@ The most important column here is readmitted, which tells us if a patient was ho
 Another column that is important is `discharge_disposition_id`, which tells us where the patient went after the hospitalization. If we look at the IDs_mapping.csv provided by UCI we can see that 11,13,14,19,20,21 are related to death or hospice. We should remove these samples from the predictive model since they cannot be readmitted.
 
 `In [6]:`
+
 ```python
 df = df.loc[~df.discharge_disposition_id.isin([11,13,14,19,20,21])]
 ```
@@ -56,6 +57,7 @@ df = df.loc[~df.discharge_disposition_id.isin([11,13,14,19,20,21])]
 Now let’s define an output variable for our binary classification. Here we will try to predict if a patient is likely to be re-admitted within 30 days of discharge.
 
 `In [7]:`
+
 ```python
 df['OUTPUT_LABEL'] = (df.readmitted == '<30').astype('int')
 ```
@@ -85,6 +87,7 @@ In this section, we will create features for our predictive model. For each sect
 In this data set, the missing numbers were filled with a question mark. Let’s replace it with a nan representation.
 
 `In [10]:`
+
 ```python
 # replace ? with nan
 df = df.replace('?',np.nan)
@@ -101,10 +104,13 @@ cols_num = ['time_in_hospital','num_lab_procedures', 'num_procedures', 'num_medi
 Let’s check if there are any missing values in the numerical data.
 
 `In [12]: `
+
 ```python
 df[cols_num].isnull().sum()
 ```
+
 `Out[12]:`
+
 ```python
 time_in_hospital      0
 num_lab_procedures    0
@@ -123,6 +129,7 @@ The next type of features we want to create are categorical variables. Categoric
 The first set of categorical data we will deal with are these columns:
 
 `In [14]:`
+
 ```python
 cols_cat = ['race', 'gender', 
        'max_glu_serum', 'A1Cresult',
@@ -137,6 +144,7 @@ cols_cat = ['race', 'gender',
 Of our categorical features, `race`, `payer_code`, and `medical_specialty` have missing data. Since these are categorical data, the best thing to do is to just add another categorical type for unknown using the `fillna` function.
 
 `In [15]:`
+
 ```python
 df['race'] = df['race'].fillna('UNK')
 df['payer_code'] = df['payer_code'].fillna('UNK')
@@ -146,6 +154,7 @@ df['medical_specialty'] = df['medical_specialty'].fillna('UNK')
 Note that `medical_specialty` is not contained in our list above because we need to do one more processing step. Let’s investigate medical specialty before we begin with one-hot encoding.
 
 `In [16]:`
+
 ```python
 print('Number medical specialty:', df.medical_specialty.nunique())
 df.groupby('medical_specialty').size().sort_values(ascending = False)
@@ -153,6 +162,7 @@ df.groupby('medical_specialty').size().sort_values(ascending = False)
 Number medical specialty: 73
 
 `Out[16]:`
+
 ```python
 medical_specialty
 UNK                                  48616
@@ -315,7 +325,7 @@ Since we balanced our training data, let’s set our threshold at 0.5 to label a
 thresh = 0.5
 ```
 
-### Random forest
+### Random Forest
 Random Forest is a flexible, easy to use machine learning algorithm that produces, even without hyper-parameter tuning, a great result most of the time. It is also one of the most used algorithms, because it's simplicity and the fact that it can be used for both classification and regression tasks.
 
 One disadvantage of decision trees is that they tend overfit very easily by memorizing the training data. As a result, random forests were created to reduce the overfitting. In random forest models, multiple trees are created and the results are aggregated. The trees in a forest are decorrelated by using a random set of samples and random number of features in each tree. In most cases, random forests work better than decision trees because they are able to generalize more easily. To fit random forests, we can use the following code.
@@ -325,17 +335,12 @@ One disadvantage of decision trees is that they tend overfit very easily by memo
 ![Figure 28](img/fig28.png)
 
 
-## Outcome
+## Conclusion
 Through this project, we created a binary classifier to predict the probability that a patient with diabetes would be readmitted to the hospital within 30 days. On held out test data, our best model had an AUC of of 0.681. Using this model, we are able to catch 58% of the readmissions from our model that performs approximately 1.5 times better than randomly selecting patients.
 
 ## Deployment 
 We have reached the exact point in which the model which ever been built has to be deployed in-order to predict the readmission of diabetic patients. 
 
-## Outcomes 
-
-## Deployment 
-
-## Conclusions
 
 ### Links:
 - HRRP: https://www.cms.gov/Medicare/Quality-Initiatives-Patient-Assessment-Instruments/Value-Based-Programs/HRRP/Hospital-Readmission-Reduction-Program.html
